@@ -1,80 +1,84 @@
 <!DOCTYPE html>
 <html>
-	<head>
-		<meta charset="utf-8" />
-		<title>MyukiDanMu演示</title>
-		<link rel="stylesheet" href="./css/MyukiDanMu.css" />
-		<script type="text/javascript" src="./js/MyukiDanMu.js"></script>
-	</head>
-	<style>
-		body {
-			/* background-color: #c8d6e5; */
-			display: flex;
-			align-items: center;
-			justify-content: center;
-		}
 
-		.form-box {
-			display: flex;
-			flex-direction: column;
-			margin-top: 32px;
-			width: 100%;
-		}
+<head>
+	<meta charset="utf-8" />
+	<title>MyukiDanMu演示</title>
+	<link rel="stylesheet" href="./css/MyukiDanMu.css" />
+	<script type="text/javascript" src="./js/MyukiDanMu.js"></script>
+</head>
+<style>
+	body {
+		/* background-color: #c8d6e5; */
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
 
-		.form-box textarea {
-			padding: 16px;
-			margin-bottom: 12px;
-			outline: none;
-			border-radius: 16px;
-			font-size: 24px;
-			height: 50px;
-			border: none;
-			box-shadow: inset 0px 0px 8px #576574;
-		}
+	.form-box {
+		display: flex;
+		flex-direction: column;
+		margin-top: 32px;
+		width: 100%;
+	}
 
-		.form-box #tucao {
-			padding: 8px;
-			outline: none;
-			cursor: pointer;
-			background-color: #576574;
-			border-radius: 8px;
-			font-size: 24px;
-			color: white;
-			font-weight: bold;
-			text-align: center;
-			transition: all .35s ease;
-		}
+	.form-box textarea {
+		padding: 16px;
+		margin-bottom: 12px;
+		outline: none;
+		border-radius: 16px;
+		font-size: 24px;
+		height: 50px;
+		border: none;
+		box-shadow: inset 0px 0px 8px #576574;
+	}
 
-		#tucao:hover {
-			box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.6);
-		}
+	.form-box #tucao {
+		padding: 8px;
+		outline: none;
+		cursor: pointer;
+		background-color: #576574;
+		border-radius: 8px;
+		font-size: 24px;
+		color: white;
+		font-weight: bold;
+		text-align: center;
+		transition: all .35s ease;
+	}
 
-		.AwesomeDanMu {
-			height: 250px;
-			width: 100%;
-		}
-		.container{
-			width: 80%;
-			height: 100%;
-		}
-		h1{
-			text-align: center;
-			line-height: 1;
-			padding: 32px;
-		}
-	</style>
-	<body>
-		<div class="container">
-			<h1>MyukiDanMu测试</h1>
-			<div class="AwesomeDanMu"></div>
-			<div class="form-box">
-				<textarea name="" id="tucaotext" cols="30" rows="10"></textarea>
-				<div id="tucao">吐槽一下</div>
-			</div>
+	#tucao:hover {
+		box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.6);
+	}
+
+	.AwesomeDanMu {
+		height: 250px;
+		width: 100%;
+	}
+
+	.container {
+		width: 80%;
+		height: 100%;
+	}
+
+	h1 {
+		text-align: center;
+		line-height: 1;
+		padding: 32px;
+	}
+</style>
+
+<body>
+	<div class="container">
+		<h1>MyukiDanMu测试</h1>
+		<div class="AwesomeDanMu"></div>
+		<div class="form-box">
+			<textarea name="" id="tucaotext" cols="30" rows="10"></textarea>
+			<div id="tucao">吐槽一下</div>
 		</div>
+	</div>
 
-		<script>
-			const LISAO = `帝高阳之苗裔兮，朕皇考曰伯庸。
+	<script>
+		const LISAO = `帝高阳之苗裔兮，朕皇考曰伯庸。
 			
 			摄提贞于孟陬兮，惟庚寅吾以降。
 			
@@ -449,46 +453,50 @@
 			国无人莫我知兮，又何怀乎故都！
 			
 			既莫足与为美政兮，吾将从彭咸之所居！`
-			let colors = ['#ff4757','#ff7f50','#eccc68','#7bed9f','#2ed573','#1e90ff','#5352ed','#2f3542','#fd79a8','#6c5ce7','#63cdda','#2bcbba'];
+		let colors = ['#ff4757', '#ff7f50', '#eccc68', '#7bed9f', '#2ed573', '#1e90ff', '#5352ed', '#2f3542', '#fd79a8', '#6c5ce7', '#63cdda', '#2bcbba'];
 
-			let list = LISAO.split(/\s+/);
-			let avatars = ['./img/avatar1.jpg', './img/avatar2.png'];
-			let DanMuPool = [];
-			for (let i = 0; i < list.length; i++) {
-				let item = {
-					danmu: '我是一条弹幕',
-					color: colors[Math.floor(Math.random() * colors.length)],
-					href: '#' + new Date().getTime(),
-					avatar: './img/avatar1.jpg',
-				};
-				item.danmu = list[i];
-				item.color = colors[Math.floor(Math.random() * colors.length)];
-				item.href = '#' + new Date().getTime();
-				item.avatar = avatars[Math.floor(Math.random() * avatars.length)];
-				DanMuPool.push(item);
-			}
-			window.danmu = $MDM({
-				locate: '.AwesomeDanMu',
-				maxDanMuWidth: 300,
-				pool: DanMuPool,
-				curtain: 'url(./img/curtain.jpg)',				});
-			// danmu.shotPool(DanMuPool);
+		let list = LISAO.split(/\s+/);
+		let avatars = ['./img/avatar1.jpg', './img/avatar2.png'];
+		let DanMuPool = [];
+		for (let i = 0; i < list.length; i++) {
+			let item = {
+				danmu: '我是一条弹幕',
+				color: colors[Math.floor(Math.random() * colors.length)],
+				href: '#' + new Date().getTime(),
+				avatar: './img/avatar1.jpg',
+			};
+			item.danmu = list[i];
+			item.color = colors[Math.floor(Math.random() * colors.length)];
+			item.href = '#' + new Date().getTime();
+			item.avatar = avatars[Math.floor(Math.random() * avatars.length)];
+			DanMuPool.push(item);
+		}
+		window.danmu = $MDM({
+			locate: '.AwesomeDanMu',
+			maxDanMuWidth: 300,
+			pool: DanMuPool,
+			curtain: 'url(./img/curtain.jpg)',
+			loop: true
+		})
+			;
+		// danmu.shotPool(DanMuPool);
 
-			document.getElementById('tucao').onclick = function() {
-				let tucao = document.getElementById('tucaotext').value;
-				// danmu.say(tucao); 
-				document.getElementById('tucaotext').value = '';
-				danmu.shot({
-					avatar: './img/avatar.jpg',
-					danmu: tucao
-				})
+		document.getElementById('tucao').onclick = function () {
+			let tucao = document.getElementById('tucaotext').value;
+			// danmu.say(tucao); 
+			document.getElementById('tucaotext').value = '';
+			danmu.shot({
+				avatar: './img/avatar.jpg',
+				danmu: tucao
+			})
+		}
+		document.getElementById('tucaotext').onkeyup = function () {
+			event.preventDefault();
+			if (event.keyCode === 13) {
+				document.getElementById('tucao').click();
 			}
-			document.getElementById('tucaotext').onkeyup = function() {
-				event.preventDefault();
-				if(event.keyCode === 13){
-					document.getElementById('tucao').click();
-				}
-			}
-		</script>
-	</body>
+		}
+	</script>
+</body>
+
 </html>

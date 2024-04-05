@@ -4,7 +4,7 @@
  * github: https://github.com/Uyukisan
  * blog: https://stackblog.cf
  */
-(function(window) {
+(function (window) {
 	"use strict";
 
 	var defaultSetting = {
@@ -21,15 +21,17 @@
 		maxPoolDelay: 5,
 		minPoolDelay: 1,
 		// maxDanMuWidth: 250,
+		loop: false,
+
 	};
 	Object.freeze(defaultSetting);
-	var MyukiDanMu = function(option, undefined) {
+	var MyukiDanMu = function (option, undefined) {
 		return new MyukiDanMu.fn.init(option, undefined);
 	};
 	MyukiDanMu.prototype = MyukiDanMu.fn = {
 		constructor: MyukiDanMu,
 
-		init: function(option, undefined) {
+		init: function (option, undefined) {
 			let newSetting = {};
 			typeof option == 'string' ? newSetting.danmu = option.toString() : newSetting = option;
 			this._setting = extend({}, defaultSetting, newSetting);
@@ -37,7 +39,7 @@
 			addClass('myuki-danmu_box', newDanMuBox);
 			addClass('cover', newDanMuBox);
 			newDanMuBox.style.background = this._setting.curtain;
-			if(this._setting.curtain.match(/url\(.*?\)/)){
+			if (this._setting.curtain.match(/url\(.*?\)/)) {
 				newDanMuBox.style.backgroundSize = 'cover';
 			}
 			this._danmubox = newDanMuBox;
@@ -55,17 +57,33 @@
 				document.body.prepend(awesomeDanMu);
 			}
 			!this._setting.maxDanMuWidth ? this._setting.maxDanMuWidth = this._getDanMuBoxInfo()._trackLength * 2 : '';
-			if(this._setting.pool.length>0){
+			this.shot_timer = null
+			this.shot_index = 0
+			if (this._setting.pool.length > 0) {
 				this.shotPool();
 			}
+			let _this = this
+			document.addEventListener("visibilitychange", function () {
+				if (document.visibilityState == "hidden") {
+					clearInterval(_this.shot_timer);
+				} else {
+					if (_this.shot_index >= _this._setting.pool.length) {
+						_this.shot_index = 0;
+					}
+					_this.shot(_this._setting.pool[_this.shot_index]);
+					_this.shot_index++;
+					_this._setup_timer();
+				}
+			});
+
 			return this;
 		},
 
-		getSetting: function() {
+		getSetting: function () {
 			return this._setting;
 		},
 
-		_getDanMuBoxInfo: function() {
+		_getDanMuBoxInfo: function () {
 			let _tracks = parseInt(this._danmubox.offsetHeight / 44);
 			let _trackLength = this._danmubox.getBoundingClientRect().width;
 			let _trackWidth = this._danmubox.offsetHeight / _tracks;
@@ -76,14 +94,14 @@
 			}
 		},
 
-		help: function() {
+		help: function () {
 			console.log('%c⛄️欢迎使用Myuki DanMu👏',
 				'font-size:14px;border:20px solid #1e90ff;border-radius:10px;background:white;color:black;'
-				);
+			);
 			console.log('\n使用方法：https://www.jq22.com/mem1320295，https://stackblog.cf/posts/24447/\n');
 
 		},
-		_addoneMyukiDanMu: function(oneoption) {
+		_addoneMyukiDanMu: function (oneoption) {
 			let onesetting = this.getSetting();
 			onesetting = extend({}, onesetting, oneoption);
 			let newDanMu = document.createElement('a');
@@ -97,7 +115,7 @@
 				newAvatar.appendChild(newImg);
 				newDanMu.appendChild(newAvatar);
 			}
-			if(onesetting.id){
+			if (onesetting.id) {
 				newDanMu.setAttribute('id', onesetting.id);
 			}
 			let newContent = document.createElement('div');
@@ -114,23 +132,23 @@
 			// newDanMu.style.transform = `translateX(-20px)`;
 			let remainTime = onesetting.speed;
 			let _this = this;
-			newDanMu.onmouseover = function() {
-				remainTime = ((newDanMu.getBoundingClientRect().left+ newDanMu.getBoundingClientRect().width-_this._danmubox.getBoundingClientRect().left) /(box._trackLength+newDanMu.getBoundingClientRect().width)) * onesetting.speed;
-				newDanMu.style.transform = `translateX(${-(_this._danmubox.getBoundingClientRect().right-newDanMu.getBoundingClientRect().left)}px`;
+			newDanMu.onmouseover = function () {
+				remainTime = ((newDanMu.getBoundingClientRect().left + newDanMu.getBoundingClientRect().width - _this._danmubox.getBoundingClientRect().left) / (box._trackLength + newDanMu.getBoundingClientRect().width)) * onesetting.speed;
+				newDanMu.style.transform = `translateX(${-(_this._danmubox.getBoundingClientRect().right - newDanMu.getBoundingClientRect().left)}px`;
 				newDanMu.style.boxShadow = '0px 0px 8px ' + onesetting.color;
 
 			}
-			newDanMu.onmouseout = function() {
+			newDanMu.onmouseout = function () {
 				newDanMu.style.transition = `transform ${remainTime}s linear,box-shadow .3s ease`;
-				newDanMu.style.transform = `translateX(${-(box._trackLength+newDanMu.getBoundingClientRect().width)}px)`;
+				newDanMu.style.transform = `translateX(${-(box._trackLength + newDanMu.getBoundingClientRect().width)}px)`;
 
 				newDanMu.style.boxShadow = 'none';
 
 			}
-			newDanMu.addEventListener('transitionend',()=>{
-				if(newDanMu.getBoundingClientRect().right<=this._danmubox.getBoundingClientRect().left){
+			newDanMu.addEventListener('transitionend', () => {
+				if (newDanMu.getBoundingClientRect().right <= this._danmubox.getBoundingClientRect().left) {
 					newDanMu.remove();
-					
+
 				}
 			})
 			this._danmubox.appendChild(newDanMu);
@@ -139,36 +157,42 @@
 			}
 			return newDanMu;
 		},
-		shot: function(option) {
+		shot: function (option) {
 			let doOption = {};
 			let box = this._getDanMuBoxInfo();
 			typeof option == 'string' ? doOption.danmu = option.toString() : doOption = option;
 			let danmu = this._addoneMyukiDanMu(doOption);
-			danmu.style.transform = `translateX(${-(box._trackLength+danmu.getBoundingClientRect().width)}px)`;
+			danmu.style.transform = `translateX(${-(box._trackLength + danmu.getBoundingClientRect().width)}px)`;
 		},
-		shotPool: function(pool) {
-			let POOL = [];
-			!pool || pool.length <= 0 ? POOL = this._setting.pool : POOL = pool;
-			if (typeof pool == 'string') {
-				return false;
-			}
-			let timer1;
-			let _this = this; //便于在定时器中访问正确的this
-			if (POOL.length > 0) {
-				let delay = randomNum(this._setting.minPoolDelay,this._setting.maxPoolDelay);
-				timer1 = setInterval(shotPool, delay * 1000);
-				return true;
-			} else {
-				return false;
-			}
-
-			function shotPool() {
-				if (POOL.length > 0) {
-					_this.shot(POOL.shift())
-					// console.log('还剩' + POOL.length + '条弹幕未发送。');
-				} else if (POOL.length <= 0) {
-					clearInterval(timer1);
+		shotPool: function (pool) {
+			if (this._setting.loop && isArray(pool)) {
+				for (let i = 0; i < pool.length; i++) {
+					this._setting.pool.push(pool[i])
 				}
+			}
+			this._setup_timer();
+			return true;
+		},
+		_shotPool: function () {
+			if (this._setting.loop) {
+				if (this.shot_index >= this._setting.pool.length) {
+					this.shot_index = 0;
+				}
+			}
+			if (this.shot_index < this._setting.pool.length) {
+				this.shot(this._setting.pool[this.shot_index]);
+				this.shot_index++;
+			} else {
+				clearInterval(this.shot_timer);
+			}
+		},
+		_setup_timer: function () {
+			if (self.shot_timer) {
+				clearInterval(self.shot_timer);
+			}
+			if (this._setting.pool.length > 0 && this.shot_index < this._setting.pool.length) {
+				let delay = randomNum(this._setting.minPoolDelay, this._setting.maxPoolDelay);
+				this.shot_timer = setInterval(this._shotPool.bind(this), delay * 1000);
 			}
 		}
 	}
@@ -216,27 +240,37 @@
 		let classList = element.getAttribute('class').split(' ');
 		for (let i = 0; i < classList.length; i++) {
 			if (classList[i] == cla) {
-				classList.splice(i,1);
+				classList.splice(i, 1);
 			}
 		}
-	
-		element.setAttribute('class',classList.join(' ')); 
+
+		element.setAttribute('class', classList.join(' '));
 
 	}
 
-	function randomNum(minNum,maxNum){ 
-		switch(arguments.length){ 
-			case 1: 
-				return parseInt(Math.random()*minNum+1,10); 
-			break; 
-			case 2: 
-				return parseInt(Math.random()*(maxNum-minNum+1)+minNum,10); 
-			break; 
-				default: 
-					return 0; 
-				break; 
-		} 
-	} 
+	function randomNum(minNum, maxNum) {
+		switch (arguments.length) {
+			case 1:
+				return parseInt(Math.random() * minNum + 1, 10);
+				break;
+			case 2:
+				return parseInt(Math.random() * (maxNum - minNum + 1) + minNum, 10);
+				break;
+			default:
+				return 0;
+				break;
+		}
+	}
+
+	function isArray(obj) {
+		if (!Array.isArray) {
+			Array.isArray = function (arg) {
+				return Object.prototype.toString.call(arg) === '[object Array]';
+			};
+		}
+		return Array.isArray(obj);
+	}
+
 	MyukiDanMu.fn.init.prototype = MyukiDanMu.fn;
 	window.MyukiDanMu = MyukiDanMu;
 	window.$MDM = MyukiDanMu;
